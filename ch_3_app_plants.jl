@@ -19,7 +19,7 @@ using Printf
 temps = 0:5:60 #degrees C
 sigma = 5.6697e-8 #W/m^2/K^4
 f = Figure()
-ax = Axis(f[1, 1], title = "Degrees C VS Radiation", 
+ax = Axis(f[1, 1], title = "Degrees C VS Radiation :)", 
     xlabel = "Celsius", 
     ylabel = "Radiation (W/m²)")
 R = sigma * (temps .+ 273.15).^4 
