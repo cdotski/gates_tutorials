@@ -197,6 +197,10 @@ plot!(
 # Q4 Te versus R + C + E
 # ================================================
 
+using Plots
+using Unitful
+using Printf
+
 D = 0.05u"m"
 rera = 200u"s/m"
 V = 0.1u"m/s"
@@ -209,6 +213,8 @@ R = uconvert.(u"W/m^2", sigma .* uconvert.(u"K", T_ls) .^ 4)  # W/m^2
 
 #Leaf temps 
 T_ls = collect(20:0.5:45) .* u"°C"
+Tl_vals = ustrip.(u"°C", T_ls)
+    
 
 # Calculate convection energy
 k1 = 9.14u"J/m^2/s^0.5/K"
@@ -220,6 +226,7 @@ E = [uconvert.(u"W/m^2", latent_flux(Tl, T_a, h, rera)) for Tl in T_ls] # W/m^2
 # Total energy loss
 total_loss = R .+ C .+ E
 
+leaf_area = uconvert(u"m^2", 5.0u"cm" * 4.0u"cm")
 total_loss_4x5cm = total_loss .* ustrip(u"m^2", leaf_area) # W
 
 # Plot T_ls vs total loss 
