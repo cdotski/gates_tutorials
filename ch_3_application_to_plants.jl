@@ -445,6 +445,228 @@ plot!(p1, T_ls, E, label = "Evaporative Heat Flux")
 display(p1)
 
 
+# Now determine the leaf temperature at Qa = 700 W/m^2
+target_Qa = 700.0u"W/m^2"
+i = argmin(abs.(RCE .- target_Qa))
+leaf_temp = T_ls[i]
+println("Leaf temperature at target when radiation absorbed is Qa = 700 W/m^2: $leaf_temp")
+
+
+# Now determine the rate of water loss at this leaf temperature
+E_i = E[i] / latent_heat(T_air)
+water_loss = uconvert(u"kg/m^2/s", E_i)
+
+println("Rate of water loss at leaf temperature $leaf_temp: $water_loss")
+
+
+
+
+
+
+
+# 9. In the first example in the chapter, a plant leaf had the following
+# properties: P_MLT = 0.05 mmole m-2 s-1, R = 200 s m-1, K = 10 mmole
+# m-3 , and K_L = 100 W m-2. The environmental conditions were L = 400
+# W m-2 , C_a = 12.5 mmole m-3 , and temperature such that G(T) = 1.0.
+# Calculation showed that P = 0.0185 mmole m-2 S-l.
+
+# Start by defining the specified variables 
+P_MLT = 0.05u"mmol/m^2/s"
+R = 200u"s/m"
+K = 10u"mmol/m^3"
+K_L = 100u"W/m^2"
+L = 400u"W/m^2"
+C_a = 12.5u"mmol/m^3"
+G_T = 1.0
+
+
+# What is the photosynthetic rate if K = 5 mmole m-3 ? (All other parameters
+# and conditions are as specified initially.)
+
+K = 5u"mmol/m^3"
+
+# use equation 3.13 here
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+
+# Then use Pm in the calculation for P
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at K = 5 mmole m-3: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# close enough 
+
+# If K = 20 mmole m-3?
+K = 20u"mmol/m^3"
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at K = 20 mmole m-3: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+
+
+
+# If PMLT = 0.025 mmole m-2 S-l and all other parameters and conditions
+# are as specified initially?
+P_MLT = 0.025u"mmol/m^2/s"
+R = 200u"s/m"
+K = 10u"mmol/m^3"
+K_L = 100u"W/m^2"
+L = 400u"W/m^2"
+C_a = 12.5u"mmol/m^3"
+G_T = 1.0
+
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at P_MLT = 0.025 mmole m-2 s-1: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+
+
+# If PMLT = 0.10 mmole m-2 S-l?
+P_MLT = 0.10u"mmol/m^2/s"
+
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at P_MLT = 0.10 mmole m-2 s-1: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+
+
+
+# If R = 400 s m-1 and all other parameters and conditions are as specified
+# initially? R bring the resistance to CO2 diffusion.
+P_MLT = 0.05u"mmol/m^2/s"
+R = 400u"s/m"
+K = 10u"mmol/m^3"
+K_L = 100u"W/m^2"
+L = 400u"W/m^2"
+C_a = 12.5u"mmol/m^3"
+G_T = 1.0
+
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at R = 400 s m-1: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+
+
+
+# 10. From the calculations made in the chapter and those in the above
+# problem, rank the following plant parameters with regard to their effect
+# upon photosynthesis, from the most to least important: R, K, and PMLT •
+#
+# Effect on photosynthesis:
+# PMLT: −45% to +66%
+# K:    approximately ±30%
+# R:    −17% to +9%
+#
+# Therefore, the order of importance is:
+# PMLT > K > R
+
+
+
+
+# 11. Test the photosynthetic sensitivity of the plant to changes in environmental
+# conditions by letting L = 200 and then 800 W m-2 , with all
+# other conditions constant. Do the same for Ca = 6.25 and 25 mmole m-3 •
+# Test the sensitivity to G(T) by letting it equal 0.5. From these calculations,
+# rank the response of the plant to light, carbon dioxide concentration,
+# and temperature in order of greatest to least sensitivity.
+
+P_MLT = 0.05u"mmol/m^2/s"
+R = 200u"s/m"
+K = 10u"mmol/m^3"
+K_L = 100u"W/m^2"
+L = 400u"W/m^2"
+C_a = 12.5u"mmol/m^3"
+G_T = 1.0
+
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at L = 200 W/m^2: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at L = 400 W/m^2: 0.0187 mmol m^-2 s^-1
+
+L = 200u"W/m^2"
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at L = 200 W/m^2: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at L = 200 W/m^2: 0.0161 mmol m^-2 s^-1
+
+L = 800u"W/m^2"
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at L = 800 W/m^2: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at L = 800 W/m^2: 0.0203 mmol m^-2 s^-1
+
+
+# Do the same for Ca = 6.25 and 25 mmole m-3
+P_MLT = 0.05u"mmol/m^2/s"
+R = 200u"s/m"
+K = 10u"mmol/m^3"
+K_L = 100u"W/m^2"
+L = 400u"W/m^2"
+C_a = 12.5u"mmol/m^3"
+G_T = 1.0
+
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at C_a = 12.5 mmol/m^3: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at C_a = 12.5 mmol/m^3: 0.0187 mmol m^-2 s^-1
+
+C_a = 6.25u"mmol/m^3"
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at C_a = 6.25 mmol/m^3: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at C_a = 6.25 mmol/m^3: 0.0114 mmol m^-2 s^-1
+
+C_a = 25u"mmol/m^3"
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at C_a = 25 mmol/m^3: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at C_a = 25 mmol/m^3: 0.0265 mmol m^-2 s^-1
+
+
+# Now for GT
+# Do the same for Ca = 6.25 and 25 mmole m-3
+P_MLT = 0.05u"mmol/m^2/s"
+R = 200u"s/m"
+K = 10u"mmol/m^3"
+K_L = 100u"W/m^2"
+L = 400u"W/m^2"
+C_a = 12.5u"mmol/m^3"
+G_T = 1.0
+
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at G_T = 1.0: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at G_T = 1.0: 0.0187 mmol m^-2 s^-1
+
+
+G_T = 0.5
+Pm = (P_MLT * G_T) / (1 + (K_L / L)) 
+P = ((C_a + K + R*Pm) - sqrt((C_a + K + R*Pm)^2 - 4*C_a*R*Pm)) / (2*R)
+println("Photosynthetic rate at G_T = 0.5: $(round(typeof(0.0001u"mmol/m^2/s"), P, digits=4))")
+# Photosynthetic rate at G_T = 0.5: 0.0102 mmol m^-2 s^-1
+
+
+# Performance from varying the different environmental parameters:
+# L (Light intensity)
+# Photosynthetic rate at L = 200 W/m^2: 0.0161 mmol m^-2 s^-1 (reduction = 13.9%)
+# Photosynthetic rate at L = 400 W/m^2: 0.0187 mmol m^-2 s^-1    
+# Photosynthetic rate at L = 800 W/m^2: 0.0203 mmol m^-2 s^-1 (increase = 8.6%)
+
+# C_a (Ambient CO2 concentration)
+# Photosynthetic rate at C_a = 6.25 mmol/m^3: 0.0114 mmol m^-2 s^-1 (reduction = 39.0%)
+# Photosynthetic rate at C_a = 12.5 mmol/m^3: 0.0187 mmol m^-2 s^-1
+# Photosynthetic rate at C_a = 25 mmol/m^3: 0.0265 mmol m^-2 s^-1 (increase = 41.7%)
+
+# G_T (Temperature factor)
+# Photosynthetic rate at G_T = 1.0: 0.0187 mmol m^-2 s^-1
+# Photosynthetic rate at G_T = 0.5: 0.0102 mmol m^-2 s^-1 (reduction = 45.5%)
+
+# So the influence goes from G_T (Temperature factor) > C_a (Ambient CO2 concentration) > L (Light intensity)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
